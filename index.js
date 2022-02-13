@@ -8,6 +8,6 @@ const app = express();
 
 console.log("APP_PORT", APP_PORT);
 
-app.get("/", (req, res) => res.send("hello world!"));
+app.get("/", (req, res) => res.send("Hello World!"));
 
 app.listen(APP_PORT, () => console.log("app started at ", APP_PORT));
