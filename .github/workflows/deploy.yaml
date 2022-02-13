@@ -10,9 +10,6 @@ on:
     branches:
       - main
 
-before_script:
-  - TASK_DEFINITION=(aws ecs describe-task-definition --task-definition "${{secrets.TASK_DEFINITION_NAME}}" --region "${AWS_REGION}") # set this to the path to your Amazon ECS task definition
-
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }} # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }} # set this to your Amazon ECR repository name
@@ -58,6 +55,11 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          
+      - name: Get ECS Task Definition
+        id: get-task_def
+        run: |
+          env.ECS_TASK_DEFINITION=(aws ecs describe-task-definition --task-definition "${{secrets.TASK_DEFINITION_NAME}}" --region "${AWS_REGION}")
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
